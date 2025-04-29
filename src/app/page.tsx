@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import Profile from "@/components/profile";
 
 export default async function Home() {
+  // In Next.js 15, we need to properly await the auth function
+  // which internally uses headers() API
   const session = await auth();
 
   return (
