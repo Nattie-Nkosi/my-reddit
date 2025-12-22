@@ -24,6 +24,10 @@
 /.claude/
 CLAUDE.md
 
+# database
+prisma/dev.db
+prisma/dev.db-journal
+
 # misc
 .DS_Store
 *.pem
