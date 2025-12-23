@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { db } from "@/db";
+import { auth } from "@/auth";
 import paths from "@/paths";
 import {
   Card,
@@ -10,13 +11,25 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/format-time";
+import VoteButtons from "@/components/vote-buttons";
+import type { Post, User, Vote } from "@prisma/client";
 
 interface PostListProps {
   topicSlug: string;
 }
 
+type PostWithIncludes = Post & {
+  user: User;
+  votes: Vote[];
+  _count: {
+    comments: number;
+  };
+};
+
 export default async function PostList({ topicSlug }: PostListProps) {
-  const posts = await db.post.findMany({
+  const session = await auth();
+
+  const posts: PostWithIncludes[] = await db.post.findMany({
     where: {
       topic: {
         slug: topicSlug,
@@ -24,6 +37,7 @@ export default async function PostList({ topicSlug }: PostListProps) {
     },
     include: {
       user: true,
+      votes: true,
       _count: {
         select: {
           comments: true,
@@ -43,7 +57,8 @@ export default async function PostList({ topicSlug }: PostListProps) {
             <div className="text-5xl">✍️</div>
             <h3 className="font-semibold text-lg">No posts yet</h3>
             <p className="text-muted-foreground text-sm max-w-sm">
-              Be the first to create a post! Click the "Create Post" button above to share your thoughts.
+              Be the first to create a post! Click the "Create Post" button
+              above to share your thoughts.
             </p>
           </div>
         </CardContent>
@@ -53,31 +68,52 @@ export default async function PostList({ topicSlug }: PostListProps) {
 
   return (
     <div className="space-y-4">
-      {posts.map((post) => (
-        <Link key={post.id} href={paths.postShow(topicSlug, post.id)}>
-          <Card className="hover:bg-accent transition-colors cursor-pointer">
-            <CardHeader>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 space-y-1">
-                  <CardTitle className="text-xl">{post.title}</CardTitle>
-                  <CardDescription>
-                    Posted by {post.user.name || "Anonymous"} •{" "}
-                    {formatRelativeTime(post.createdAt)}
-                  </CardDescription>
-                </div>
-                <Badge variant="secondary" className="shrink-0">
-                  {post._count.comments} {post._count.comments === 1 ? "comment" : "comments"}
-                </Badge>
+      {posts.map((post) => {
+        const score = post.votes.reduce((sum, vote) => sum + vote.value, 0);
+        const userVote = session?.user?.id
+          ? post.votes.find((v) => v.userId === session.user!.id)?.value || null
+          : null;
+
+        return (
+          <Card key={post.id} className="hover:bg-accent transition-colors">
+            <div className="flex gap-4">
+              <div className="pl-4 pt-6">
+                <VoteButtons
+                  targetId={post.id}
+                  targetType="post"
+                  initialScore={score}
+                  initialUserVote={userVote}
+                />
               </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground line-clamp-3">
-                {post.content}
-              </p>
-            </CardContent>
+              <Link
+                href={paths.postShow(topicSlug, post.id)}
+                className="flex-1"
+              >
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 space-y-1">
+                      <CardTitle className="text-xl">{post.title}</CardTitle>
+                      <CardDescription>
+                        Posted by {post.user.name || "Anonymous"} •{" "}
+                        {formatRelativeTime(post.createdAt)}
+                      </CardDescription>
+                    </div>
+                    <Badge variant="secondary" className="shrink-0">
+                      {post._count.comments}{" "}
+                      {post._count.comments === 1 ? "comment" : "comments"}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground line-clamp-3">
+                    {post.content}
+                  </p>
+                </CardContent>
+              </Link>
+            </div>
           </Card>
-        </Link>
-      ))}
+        );
+      })}
     </div>
   );
 }

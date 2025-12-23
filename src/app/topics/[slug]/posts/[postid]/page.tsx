@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import Link from "next/link";
 import { db } from "@/db";
 import { auth } from "@/auth";
@@ -13,6 +14,10 @@ import {
 } from "@/components/ui/card";
 import { formatRelativeTime } from "@/lib/format-time";
 import PostDeleteButton from "@/components/posts/post-delete-button";
+import CommentCreateForm from "@/components/comments/comment-create-form";
+import CommentList from "@/components/comments/comment-list";
+import VoteButtons from "@/components/vote-buttons";
+import type { Vote } from "@prisma/client";
 
 interface PostShowPageProps {
   params: Promise<{
@@ -30,6 +35,7 @@ export default async function PostShowPage(props: PostShowPageProps) {
     include: {
       user: true,
       topic: true,
+      votes: true,
       _count: {
         select: {
           comments: true,
@@ -43,6 +49,10 @@ export default async function PostShowPage(props: PostShowPageProps) {
   }
 
   const isOwner = session?.user?.id === post.userId;
+  const score = (post.votes as Vote[]).reduce((sum, vote) => sum + vote.value, 0);
+  const userVote = session?.user?.id
+    ? (post.votes as Vote[]).find((v) => v.userId === session.user!.id)?.value || null
+    : null;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -56,30 +66,58 @@ export default async function PostShowPage(props: PostShowPageProps) {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl">{post.title}</CardTitle>
-          <CardDescription>
-            Posted by {post.user.name || "Anonymous"} •{" "}
-            {formatRelativeTime(post.createdAt)}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="text-base leading-relaxed">
-            <p className="whitespace-pre-wrap">{post.content}</p>
+        <div className="flex gap-4">
+          <div className="pl-6 pt-8">
+            <VoteButtons
+              targetId={post.id}
+              targetType="post"
+              initialScore={score}
+              initialUserVote={userVote}
+            />
           </div>
+          <div className="flex-1">
+            <CardHeader>
+              <CardTitle className="text-3xl">{post.title}</CardTitle>
+              <CardDescription>
+                Posted by {post.user.name || "Anonymous"} •{" "}
+                {formatRelativeTime(post.createdAt)}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-base leading-relaxed">
+                <p className="whitespace-pre-wrap">{post.content}</p>
+              </div>
 
-          <div className="pt-6 border-t">
-            <h2 className="text-2xl font-semibold mb-4">
+          <div className="pt-6 border-t space-y-6">
+            <h2 className="text-2xl font-semibold">
               Comments ({post._count.comments})
             </h2>
-            <div className="text-center py-12 border border-dashed rounded-lg">
-              <div className="text-4xl mb-3">💬</div>
-              <p className="text-muted-foreground">
-                No comments yet. Be the first to comment!
-              </p>
-            </div>
+
+            {session?.user ? (
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <CommentCreateForm postId={post.id} />
+              </div>
+            ) : (
+              <div className="text-center py-4 border border-dashed rounded-lg">
+                <p className="text-muted-foreground text-sm">
+                  Please sign in to leave a comment
+                </p>
+              </div>
+            )}
+
+            <Suspense
+              fallback={
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">Loading comments...</p>
+                </div>
+              }
+            >
+              <CommentList postId={post.id} />
+            </Suspense>
           </div>
         </CardContent>
+          </div>
+        </div>
       </Card>
     </div>
   );

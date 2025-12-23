@@ -3,6 +3,7 @@ import { db } from "@/db";
 import paths from "@/paths";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
