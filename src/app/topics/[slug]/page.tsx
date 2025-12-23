@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import Link from "next/link";
 import { db } from "@/db";
 import paths from "@/paths";
 import { Button } from "@/components/ui/button";
+import PostList from "@/components/posts/post-list";
 
 interface TopicShowPageProps {
   params: Promise<{
@@ -37,11 +39,15 @@ export default async function TopicShowPage(props: TopicShowPageProps) {
 
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold">Posts</h2>
-        <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground">
-            No posts yet. Be the first to create one!
-          </p>
-        </div>
+        <Suspense
+          fallback={
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Loading posts...</p>
+            </div>
+          }
+        >
+          <PostList topicSlug={slug} />
+        </Suspense>
       </div>
     </div>
   );
