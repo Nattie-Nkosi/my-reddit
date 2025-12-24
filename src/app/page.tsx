@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { Github } from "lucide-react";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +14,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="border-b bg-gradient-to-b from-muted/50 to-background">
+      <section className="border-b bg-muted/30">
         <div className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center space-y-4 sm:space-y-6">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
@@ -28,7 +29,8 @@ export default async function Home() {
                 <TopicCreateForm />
               ) : (
                 <form action={actions.signIn}>
-                  <Button size="lg" type="submit" className="text-sm sm:text-base">
+                  <Button size="lg" type="submit" className="text-sm sm:text-base gap-2">
+                    <Github className="h-4 w-4 sm:h-5 sm:w-5" />
                     Get Started with GitHub
                   </Button>
                 </form>
@@ -136,7 +138,8 @@ export default async function Home() {
                 participating in discussions.
               </p>
               <form action={actions.signIn}>
-                <Button size="lg" type="submit" className="text-sm sm:text-base">
+                <Button size="lg" type="submit" className="text-sm sm:text-base gap-2">
+                  <Github className="h-4 w-4 sm:h-5 sm:w-5" />
                   Sign In with GitHub
                 </Button>
               </form>

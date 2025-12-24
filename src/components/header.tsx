@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Github } from "lucide-react";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,8 +67,10 @@ export default async function Header() {
               </DropdownMenu>
             ) : (
               <form action={actions.signIn}>
-                <Button type="submit" variant="default" size="sm" className="text-xs sm:text-sm">
-                  Sign In
+                <Button type="submit" variant="default" size="sm" className="text-xs sm:text-sm gap-1 sm:gap-2">
+                  <Github className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Sign In with GitHub</span>
+                  <span className="sm:hidden">Sign In</span>
                 </Button>
               </form>
             )}
