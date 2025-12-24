@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeToggle } from "@/components/theme-toggle";
 import * as actions from "@/actions";
 import paths from "@/paths";
 
@@ -17,19 +18,20 @@ export default async function Header() {
   const session = await auth();
 
   return (
-    <header className="border-b">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <Link href={paths.home()} className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-primary">MyReddit</div>
+            <div className="text-xl sm:text-2xl font-bold text-primary">MyReddit</div>
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <ThemeToggle />
             {session?.user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar>
+                    <Avatar className="h-9 w-9">
                       <AvatarImage src={session.user.image || ""} alt={session.user.name || ""} />
                       <AvatarFallback>
                         {session.user.name?.charAt(0).toUpperCase() || "U"}
@@ -64,7 +66,7 @@ export default async function Header() {
               </DropdownMenu>
             ) : (
               <form action={actions.signIn}>
-                <Button type="submit" variant="default">
+                <Button type="submit" variant="default" size="sm" className="text-xs sm:text-sm">
                   Sign In
                 </Button>
               </form>

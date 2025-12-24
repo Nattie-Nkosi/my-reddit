@@ -77,8 +77,8 @@ export default async function PostList({ topicSlug }: PostListProps) {
 
         return (
           <Card key={post.id} className="hover:bg-accent transition-colors">
-            <div className="flex gap-4">
-              <div className="pl-4 pt-6">
+            <div className="flex gap-2 sm:gap-4">
+              <div className="pl-2 sm:pl-4 pt-4 sm:pt-6">
                 <VoteButtons
                   targetId={post.id}
                   targetType="post"
@@ -88,13 +88,15 @@ export default async function PostList({ topicSlug }: PostListProps) {
               </div>
               <Link
                 href={paths.postShow(topicSlug, post.id)}
-                className="flex-1"
+                className="flex-1 min-w-0"
               >
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 space-y-1">
-                      <CardTitle className="text-xl">{post.title}</CardTitle>
-                      <CardDescription>
+                <CardHeader className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-2 sm:gap-4">
+                    <div className="flex-1 space-y-1 min-w-0">
+                      <CardTitle className="text-base sm:text-lg md:text-xl line-clamp-2">
+                        {post.title}
+                      </CardTitle>
+                      <CardDescription className="text-xs sm:text-sm">
                         Posted by{" "}
                         <PostUserLink
                           userId={post.user.id}
@@ -104,14 +106,17 @@ export default async function PostList({ topicSlug }: PostListProps) {
                         {formatRelativeTime(post.createdAt)}
                       </CardDescription>
                     </div>
-                    <Badge variant="secondary" className="shrink-0">
+                    <Badge variant="secondary" className="shrink-0 text-xs">
                       {post._count.comments}{" "}
-                      {post._count.comments === 1 ? "comment" : "comments"}
+                      <span className="hidden sm:inline">
+                        {post._count.comments === 1 ? "comment" : "comments"}
+                      </span>
+                      <span className="sm:hidden">💬</span>
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground line-clamp-3">
+                <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+                  <p className="text-sm sm:text-base text-muted-foreground line-clamp-2 sm:line-clamp-3">
                     {post.content}
                   </p>
                 </CardContent>
