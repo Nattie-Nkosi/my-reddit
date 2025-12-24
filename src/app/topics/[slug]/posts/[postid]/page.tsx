@@ -79,7 +79,14 @@ export default async function PostShowPage(props: PostShowPageProps) {
             <CardHeader>
               <CardTitle className="text-3xl">{post.title}</CardTitle>
               <CardDescription>
-                Posted by {post.user.name || "Anonymous"} •{" "}
+                Posted by{" "}
+                <Link
+                  href={paths.userProfile(post.user.id)}
+                  className="hover:underline font-medium"
+                >
+                  {post.user.name || "Anonymous"}
+                </Link>{" "}
+                •{" "}
                 {formatRelativeTime(post.createdAt)}
               </CardDescription>
             </CardHeader>

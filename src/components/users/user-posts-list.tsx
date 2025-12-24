@@ -12,32 +12,34 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/format-time";
 import VoteButtons from "@/components/vote-buttons";
-import PostUserLink from "@/components/posts/post-user-link";
-import type { Post, User, Vote } from "@prisma/client";
+import TopicLink from "@/components/topics/topic-link";
+import type { Post, Vote } from "@prisma/client";
 
-interface PostListProps {
-  topicSlug: string;
+interface UserPostsListProps {
+  userId: string;
 }
 
-type PostWithIncludes = Post & {
-  user: User;
+type UserPostWithDetails = Post & {
+  topic: {
+    slug: string;
+  };
   votes: Vote[];
   _count: {
     comments: number;
   };
 };
 
-export default async function PostList({ topicSlug }: PostListProps) {
+export default async function UserPostsList({ userId }: UserPostsListProps) {
   const session = await auth();
 
-  const posts: PostWithIncludes[] = await db.post.findMany({
-    where: {
-      topic: {
-        slug: topicSlug,
-      },
-    },
+  const posts: UserPostWithDetails[] = await db.post.findMany({
+    where: { userId },
     include: {
-      user: true,
+      topic: {
+        select: {
+          slug: true,
+        },
+      },
       votes: true,
       _count: {
         select: {
@@ -55,11 +57,10 @@ export default async function PostList({ topicSlug }: PostListProps) {
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center justify-center py-12">
           <div className="text-center space-y-3">
-            <div className="text-5xl">✍️</div>
+            <div className="text-5xl">📝</div>
             <h3 className="font-semibold text-lg">No posts yet</h3>
             <p className="text-muted-foreground text-sm max-w-sm">
-              Be the first to create a post! Click the "Create Post" button
-              above to share your thoughts.
+              This user hasn't created any posts yet.
             </p>
           </div>
         </CardContent>
@@ -72,11 +73,15 @@ export default async function PostList({ topicSlug }: PostListProps) {
       {posts.map((post) => {
         const score = post.votes.reduce((sum, vote) => sum + vote.value, 0);
         const userVote = session?.user?.id
-          ? post.votes.find((v) => v.userId === session.user!.id)?.value || null
+          ? post.votes.find((v) => v.userId === session.user!.id)?.value ||
+            null
           : null;
 
         return (
-          <Card key={post.id} className="hover:bg-accent transition-colors">
+          <Card
+            key={post.id}
+            className="hover:bg-accent transition-colors"
+          >
             <div className="flex gap-4">
               <div className="pl-4 pt-6">
                 <VoteButtons
@@ -87,7 +92,7 @@ export default async function PostList({ topicSlug }: PostListProps) {
                 />
               </div>
               <Link
-                href={paths.postShow(topicSlug, post.id)}
+                href={paths.postShow(post.topic.slug, post.id)}
                 className="flex-1"
               >
                 <CardHeader>
@@ -95,12 +100,7 @@ export default async function PostList({ topicSlug }: PostListProps) {
                     <div className="flex-1 space-y-1">
                       <CardTitle className="text-xl">{post.title}</CardTitle>
                       <CardDescription>
-                        Posted by{" "}
-                        <PostUserLink
-                          userId={post.user.id}
-                          userName={post.user.name}
-                        />{" "}
-                        •{" "}
+                        in <TopicLink topicSlug={post.topic.slug} /> •{" "}
                         {formatRelativeTime(post.createdAt)}
                       </CardDescription>
                     </div>

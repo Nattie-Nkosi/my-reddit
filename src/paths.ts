@@ -14,6 +14,10 @@ const paths = {
     return `/topics/${topicSlug}/posts/${postId}`
 
   },
+  userProfile(userId: string) {
+    return `/users/${userId}`
+
+  },
 }
 
 export default paths

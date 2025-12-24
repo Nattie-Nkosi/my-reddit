@@ -48,6 +48,12 @@ export default async function Header() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
+                    <Link href={paths.userProfile(session.user.id!)}>
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
                     <form action={actions.signOut} className="w-full">
                       <button type="submit" className="w-full text-left">
                         Sign Out

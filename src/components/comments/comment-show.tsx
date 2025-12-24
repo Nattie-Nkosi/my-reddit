@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { formatRelativeTime } from "@/lib/format-time";
+import paths from "@/paths";
 import CommentCreateForm from "./comment-create-form";
 import VoteButtons from "@/components/vote-buttons";
 
@@ -52,7 +54,12 @@ export default function CommentShow({
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
               <div className="flex items-center gap-2 text-sm">
-                <span className="font-semibold">{authorName || "Anonymous"}</span>
+                <Link
+                  href={paths.userProfile(userId)}
+                  className="font-semibold hover:underline"
+                >
+                  {authorName || "Anonymous"}
+                </Link>
                 <span className="text-muted-foreground">•</span>
                 <span className="text-muted-foreground text-xs">
                   {formatRelativeTime(createdAt)}
