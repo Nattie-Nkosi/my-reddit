@@ -43,17 +43,15 @@ export default function VoteButtons({
     setError(null);
 
     startTransition(async () => {
-      try {
-        if (targetType === "post") {
-          await actions.votePost(targetId, value);
-        } else {
-          await actions.voteComment(targetId, value);
-        }
-      } catch (err) {
+      const result =
+        targetType === "post"
+          ? await actions.votePost(targetId, value)
+          : await actions.voteComment(targetId, value);
+
+      if (!result.success) {
         setOptimisticScore(currentScore);
         setOptimisticUserVote(currentVote);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to vote';
-        setError(errorMessage);
+        setError(result.error || "Failed to vote");
         setTimeout(() => setError(null), 3000);
       }
     });
