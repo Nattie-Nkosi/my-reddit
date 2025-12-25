@@ -111,7 +111,7 @@ export default function CommentShow({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsEditing(true)}
-                  className="h-7 text-xs"
+                  className="h-8 text-xs sm:text-sm"
                 >
                   Edit
                 </Button>
@@ -123,7 +123,7 @@ export default function CommentShow({
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowReplyForm(!showReplyForm)}
-                className="h-7 text-xs"
+                className="h-8 text-xs sm:text-sm"
               >
                 {showReplyForm ? "Cancel" : "Reply"}
               </Button>

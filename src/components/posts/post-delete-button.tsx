@@ -14,7 +14,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import * as actions from "@/actions";
-import { Trash2 } from "lucide-react";
+import { Trash2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface PostDeleteButtonProps {
   postId: string;
@@ -29,8 +30,11 @@ export default function PostDeleteButton({ postId, topicSlug }: PostDeleteButton
     startTransition(async () => {
       try {
         await actions.deletePost(topicSlug, postId);
+        toast.success("Post deleted successfully!");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to delete post");
+        const errorMessage = err instanceof Error ? err.message : "Failed to delete post";
+        setError(errorMessage);
+        toast.error(errorMessage);
       }
     });
   };
@@ -40,8 +44,12 @@ export default function PostDeleteButton({ postId, topicSlug }: PostDeleteButton
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="destructive" size="sm" disabled={isPending}>
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete Post
+            {isPending ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Trash2 className="w-4 h-4 mr-2" />
+            )}
+            {isPending ? "Deleting..." : "Delete Post"}
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
@@ -55,6 +63,7 @@ export default function PostDeleteButton({ postId, topicSlug }: PostDeleteButton
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={isPending}>
+              {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin inline" />}
               {isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>

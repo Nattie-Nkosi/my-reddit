@@ -55,11 +55,13 @@ export default async function PostList({ topicSlug }: PostListProps) {
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center justify-center py-12">
           <div className="text-center space-y-3">
-            <div className="text-5xl">✍️</div>
+            <div className="text-5xl" role="img" aria-label="Writing">
+              ✍️
+            </div>
             <h3 className="font-semibold text-lg">No posts yet</h3>
             <p className="text-muted-foreground text-sm max-w-sm">
-              Be the first to create a post! Click the "Create Post" button
-              above to share your thoughts.
+              Be the first to create a post in this topic! Click the "Create Post" button
+              above to share your thoughts and start a discussion.
             </p>
           </div>
         </CardContent>

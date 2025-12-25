@@ -6,6 +6,14 @@ import { auth } from "@/auth";
 import paths from "@/paths";
 import { Button } from "@/components/ui/button";
 import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -57,12 +65,29 @@ export default async function PostShowPage(props: PostShowPageProps) {
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
-      <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <Link href={paths.topicShow(slug)}>
-          <Button variant="ghost" size="sm" className="text-xs sm:text-sm">
-            ← Back to {slug}
-          </Button>
-        </Link>
+      <div className="mb-6">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href={paths.home()}>Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={paths.topicShow(slug)}>
+                {slug}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="max-w-[200px] sm:max-w-md truncate">
+                {post.title}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
+      <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-end gap-3">
         {isOwner && <PostDeleteButton postId={post.id} topicSlug={slug} />}
       </div>
 

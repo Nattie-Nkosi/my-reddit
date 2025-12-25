@@ -75,15 +75,16 @@ export default function VoteButtons({
       <Button
         variant="ghost"
         size="sm"
-        className={`h-7 w-7 p-0 transition-colors ${
+        className={`h-8 w-8 sm:h-10 sm:w-10 p-0 transition-colors ${
           optimisticUserVote === 1
             ? "text-orange-500 hover:text-orange-600"
             : "text-muted-foreground hover:text-foreground"
         } ${!isAuthenticated ? "cursor-not-allowed opacity-50" : ""}`}
         onClick={() => handleVote(1)}
         disabled={isPending || !isAuthenticated}
+        aria-label="Upvote"
       >
-        <ArrowUp className="h-5 w-5" />
+        <ArrowUp className="h-5 w-5 sm:h-6 sm:w-6" />
       </Button>
       <span
         className={`text-sm font-semibold ${
@@ -99,15 +100,16 @@ export default function VoteButtons({
       <Button
         variant="ghost"
         size="sm"
-        className={`h-7 w-7 p-0 transition-colors ${
+        className={`h-8 w-8 sm:h-10 sm:w-10 p-0 transition-colors ${
           optimisticUserVote === -1
             ? "text-blue-500 hover:text-blue-600"
             : "text-muted-foreground hover:text-foreground"
         } ${!isAuthenticated ? "cursor-not-allowed opacity-50" : ""}`}
         onClick={() => handleVote(-1)}
         disabled={isPending || !isAuthenticated}
+        aria-label="Downvote"
       >
-        <ArrowDown className="h-5 w-5" />
+        <ArrowDown className="h-5 w-5 sm:h-6 sm:w-6" />
       </Button>
     </>
   );

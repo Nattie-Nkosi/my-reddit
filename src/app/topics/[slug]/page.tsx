@@ -4,6 +4,14 @@ import Link from "next/link";
 import { db } from "@/db";
 import paths from "@/paths";
 import { Button } from "@/components/ui/button";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import PostList from "@/components/posts/post-list";
 import PostListSkeleton from "@/components/posts/post-list-skeleton";
 
@@ -26,6 +34,20 @@ export default async function TopicShowPage(props: TopicShowPageProps) {
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8">
+      <div className="mb-4">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href={paths.home()}>Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{topic.slug}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
       <div className="mb-6 sm:mb-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-4 mb-4">
           <div className="flex-1 min-w-0">

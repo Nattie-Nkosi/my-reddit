@@ -1,9 +1,15 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import * as actions from "@/actions";
+
+const CONTENT_MIN = 3;
+const CONTENT_MAX = 1000;
 
 interface CommentCreateFormProps {
   postId: string;
@@ -22,22 +28,52 @@ export default function CommentCreateForm({
     actions.createComment.bind(null, { postId, parentId }),
     { errors: {} }
   );
+  const [contentLength, setContentLength] = useState(0);
 
   useEffect(() => {
-    if (formState.success && onSuccess) {
-      onSuccess();
+    if (formState.success) {
+      setContentLength(0);
+      toast.success(parentId ? "Reply posted successfully!" : "Comment posted successfully!");
+      if (onSuccess) {
+        onSuccess();
+      }
     }
-  }, [formState.success, onSuccess]);
+  }, [formState.success, onSuccess, parentId]);
 
   return (
     <form action={action} className="space-y-3">
-      <Textarea
-        name="content"
-        placeholder={parentId ? "Write a reply..." : "What are your thoughts?"}
-        disabled={isPending}
-        rows={3}
-        defaultValue={formState.success ? "" : undefined}
-      />
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="content" className="sr-only">
+            {parentId ? "Reply" : "Comment"}
+          </Label>
+          <span
+            className={`text-xs ml-auto ${
+              contentLength < CONTENT_MIN
+                ? "text-muted-foreground"
+                : contentLength > CONTENT_MAX
+                ? "text-destructive"
+                : "text-green-600"
+            }`}
+          >
+            {contentLength} / {CONTENT_MAX}
+          </span>
+        </div>
+        <Textarea
+          id="content"
+          name="content"
+          placeholder={
+            parentId
+              ? "Write a reply... (min 3 characters)"
+              : "What are your thoughts? (min 3 characters)"
+          }
+          disabled={isPending}
+          rows={3}
+          defaultValue={formState.success ? "" : undefined}
+          maxLength={CONTENT_MAX}
+          onChange={(e) => setContentLength(e.target.value.length)}
+        />
+      </div>
       {formState.errors.content && (
         <p className="text-sm text-destructive">
           {formState.errors.content.join(", ")}
@@ -50,6 +86,7 @@ export default function CommentCreateForm({
       )}
       <div className="flex justify-end">
         <Button type="submit" disabled={isPending} size="sm">
+          {isPending && <Loader2 className="mr-2 h-3 w-3 animate-spin" />}
           {isPending ? "Posting..." : parentId ? "Reply" : "Comment"}
         </Button>
       </div>
