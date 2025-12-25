@@ -22,6 +22,8 @@ import {
 import { formatRelativeTime } from "@/lib/format-time";
 import UserPostsList from "@/components/users/user-posts-list";
 import UserCommentsList from "@/components/users/user-comments-list";
+import PostListSkeleton from "@/components/posts/post-list-skeleton";
+import CommentListSkeleton from "@/components/comments/comment-list-skeleton";
 
 interface UserProfilePageProps {
   params: Promise<{
@@ -127,25 +129,13 @@ export default async function UserProfilePage(props: UserProfilePageProps) {
         </TabsList>
 
         <TabsContent value="posts">
-          <Suspense
-            fallback={
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading posts...</p>
-              </div>
-            }
-          >
+          <Suspense fallback={<PostListSkeleton />}>
             <UserPostsList userId={userid} />
           </Suspense>
         </TabsContent>
 
         <TabsContent value="comments">
-          <Suspense
-            fallback={
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading comments...</p>
-              </div>
-            }
-          >
+          <Suspense fallback={<CommentListSkeleton />}>
             <UserCommentsList userId={userid} />
           </Suspense>
         </TabsContent>

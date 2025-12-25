@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import TopicCreateForm from "@/components/topics/topic-create-form";
 import TopicList from "@/components/topics/topic-list";
+import TopicListSkeleton from "@/components/topics/topic-list-skeleton";
 import * as actions from "@/actions";
 
 export default async function Home() {
@@ -114,13 +115,7 @@ export default async function Home() {
           </div>
 
           <div className="max-w-6xl mx-auto">
-            <Suspense
-              fallback={
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Loading topics...</p>
-                </div>
-              }
-            >
+            <Suspense fallback={<TopicListSkeleton />}>
               <TopicList />
             </Suspense>
           </div>

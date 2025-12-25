@@ -16,6 +16,7 @@ import { formatRelativeTime } from "@/lib/format-time";
 import PostDeleteButton from "@/components/posts/post-delete-button";
 import CommentCreateForm from "@/components/comments/comment-create-form";
 import CommentList from "@/components/comments/comment-list";
+import CommentListSkeleton from "@/components/comments/comment-list-skeleton";
 import VoteButtons from "@/components/vote-buttons";
 import type { Vote } from "@prisma/client";
 
@@ -112,13 +113,7 @@ export default async function PostShowPage(props: PostShowPageProps) {
               </div>
             )}
 
-            <Suspense
-              fallback={
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">Loading comments...</p>
-                </div>
-              }
-            >
+            <Suspense fallback={<CommentListSkeleton />}>
               <CommentList postId={post.id} />
             </Suspense>
           </div>
