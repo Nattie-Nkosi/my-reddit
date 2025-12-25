@@ -27,15 +27,15 @@ export default async function PostCreatePage(props: PostCreatePageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div className="container mx-auto px-4 py-6 sm:py-8 max-w-3xl">
       <Card>
-        <CardHeader>
-          <CardTitle>Create a Post</CardTitle>
-          <CardDescription>
-            Create a new post in <span className="font-semibold">{topic.slug}</span>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl">Create a Post</CardTitle>
+          <CardDescription className="text-sm">
+            Create a new post in <span className="font-semibold break-words">{topic.slug}</span>
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           <PostCreateForm topicSlug={slug} />
         </CardContent>
       </Card>

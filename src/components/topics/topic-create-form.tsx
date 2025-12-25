@@ -26,10 +26,10 @@ export default function TopicCreateForm() {
       <DialogTrigger asChild>
         <Button variant="default">Create Topic</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Create a Topic</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">Create a Topic</DialogTitle>
+          <DialogDescription className="text-sm">
             Topics are used to organize posts. Choose a unique name!
           </DialogDescription>
         </DialogHeader>

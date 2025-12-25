@@ -56,10 +56,10 @@ export default async function PostShowPage(props: PostShowPageProps) {
     : null;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
+      <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <Link href={paths.topicShow(slug)}>
-          <Button variant="ghost" size="sm">
+          <Button variant="ghost" size="sm" className="text-xs sm:text-sm">
             ← Back to {slug}
           </Button>
         </Link>
@@ -67,8 +67,8 @@ export default async function PostShowPage(props: PostShowPageProps) {
       </div>
 
       <Card>
-        <div className="flex gap-4">
-          <div className="pl-6 pt-8">
+        <div className="flex gap-2 sm:gap-4">
+          <div className="pl-2 sm:pl-4 md:pl-6 pt-4 sm:pt-6 md:pt-8">
             <VoteButtons
               targetId={post.id}
               targetType="post"
@@ -76,10 +76,10 @@ export default async function PostShowPage(props: PostShowPageProps) {
               initialUserVote={userVote}
             />
           </div>
-          <div className="flex-1">
-            <CardHeader>
-              <CardTitle className="text-3xl">{post.title}</CardTitle>
-              <CardDescription>
+          <div className="flex-1 min-w-0">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-xl sm:text-2xl md:text-3xl break-words">{post.title}</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
                 Posted by{" "}
                 <Link
                   href={paths.userProfile(post.user.id)}
@@ -91,23 +91,23 @@ export default async function PostShowPage(props: PostShowPageProps) {
                 {formatRelativeTime(post.createdAt)}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="text-base leading-relaxed">
-                <p className="whitespace-pre-wrap">{post.content}</p>
+            <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+              <div className="text-sm sm:text-base leading-relaxed">
+                <p className="whitespace-pre-wrap break-words">{post.content}</p>
               </div>
 
-          <div className="pt-6 border-t space-y-6">
-            <h2 className="text-2xl font-semibold">
+          <div className="pt-4 sm:pt-6 border-t space-y-4 sm:space-y-6">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold">
               Comments ({post._count.comments})
             </h2>
 
             {session?.user ? (
-              <div className="bg-muted/50 p-4 rounded-lg">
+              <div className="bg-muted/50 p-3 sm:p-4 rounded-lg">
                 <CommentCreateForm postId={post.id} />
               </div>
             ) : (
-              <div className="text-center py-4 border border-dashed rounded-lg">
-                <p className="text-muted-foreground text-sm">
+              <div className="text-center py-3 sm:py-4 border border-dashed rounded-lg">
+                <p className="text-muted-foreground text-xs sm:text-sm">
                   Please sign in to leave a comment
                 </p>
               </div>
