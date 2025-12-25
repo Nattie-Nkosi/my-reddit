@@ -90,6 +90,7 @@ export default async function UserCommentsList({
                   targetType="comment"
                   initialScore={score}
                   initialUserVote={userVote}
+                  isAuthenticated={!!session?.user}
                 />
               </div>
               <div className="flex-1">

@@ -84,6 +84,7 @@ export default async function PostList({ topicSlug }: PostListProps) {
                   targetType="post"
                   initialScore={score}
                   initialUserVote={userVote}
+                  isAuthenticated={!!session?.user}
                 />
               </div>
               <Link

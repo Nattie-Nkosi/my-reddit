@@ -2,6 +2,12 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import * as actions from "@/actions";
 
@@ -10,6 +16,7 @@ interface VoteButtonsProps {
   targetType: "post" | "comment";
   initialScore: number;
   initialUserVote: number | null;
+  isAuthenticated?: boolean;
 }
 
 export default function VoteButtons({
@@ -17,6 +24,7 @@ export default function VoteButtons({
   targetType,
   initialScore,
   initialUserVote,
+  isAuthenticated = true,
 }: VoteButtonsProps) {
   const [isPending, startTransition] = useTransition();
   const [optimisticScore, setOptimisticScore] = useState(initialScore);
@@ -24,6 +32,11 @@ export default function VoteButtons({
   const [error, setError] = useState<string | null>(null);
 
   const handleVote = (value: 1 | -1) => {
+    if (!isAuthenticated) {
+      setError("Sign in to vote");
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
     const currentVote = optimisticUserVote;
     const currentScore = optimisticScore;
     let newScore = currentScore;
@@ -57,41 +70,68 @@ export default function VoteButtons({
     });
   };
 
-  return (
-    <div className="flex flex-col items-center gap-1 relative">
+  const buttonContent = (
+    <>
       <Button
         variant="ghost"
         size="sm"
-        className={`h-7 w-7 p-0 ${
-          optimisticUserVote === 1 ? "text-orange-500" : "text-muted-foreground"
-        }`}
+        className={`h-7 w-7 p-0 transition-colors ${
+          optimisticUserVote === 1
+            ? "text-orange-500 hover:text-orange-600"
+            : "text-muted-foreground hover:text-foreground"
+        } ${!isAuthenticated ? "cursor-not-allowed opacity-50" : ""}`}
         onClick={() => handleVote(1)}
-        disabled={isPending}
+        disabled={isPending || !isAuthenticated}
       >
         <ArrowUp className="h-5 w-5" />
       </Button>
-      <span className={`text-sm font-semibold ${
-        optimisticScore > 0
-          ? "text-orange-500"
-          : optimisticScore < 0
-          ? "text-blue-500"
-          : "text-muted-foreground"
-      }`}>
+      <span
+        className={`text-sm font-semibold ${
+          optimisticScore > 0
+            ? "text-orange-500"
+            : optimisticScore < 0
+            ? "text-blue-500"
+            : "text-muted-foreground"
+        }`}
+      >
         {optimisticScore}
       </span>
       <Button
         variant="ghost"
         size="sm"
-        className={`h-7 w-7 p-0 ${
-          optimisticUserVote === -1 ? "text-blue-500" : "text-muted-foreground"
-        }`}
+        className={`h-7 w-7 p-0 transition-colors ${
+          optimisticUserVote === -1
+            ? "text-blue-500 hover:text-blue-600"
+            : "text-muted-foreground hover:text-foreground"
+        } ${!isAuthenticated ? "cursor-not-allowed opacity-50" : ""}`}
         onClick={() => handleVote(-1)}
-        disabled={isPending}
+        disabled={isPending || !isAuthenticated}
       >
         <ArrowDown className="h-5 w-5" />
       </Button>
+    </>
+  );
+
+  return (
+    <div className="flex flex-col items-center gap-1 relative">
+      {!isAuthenticated ? (
+        <TooltipProvider>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <div className="flex flex-col items-center gap-1">
+                {buttonContent}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Sign in to vote</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        buttonContent
+      )}
       {error && (
-        <div className="absolute mt-24 bg-destructive/10 text-destructive text-xs px-2 py-1 rounded whitespace-nowrap">
+        <div className="absolute top-full mt-2 bg-destructive text-destructive-foreground text-xs px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap z-10 animate-in fade-in slide-in-from-top-1">
           {error}
         </div>
       )}

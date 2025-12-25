@@ -89,6 +89,7 @@ export default async function UserPostsList({ userId }: UserPostsListProps) {
                   targetType="post"
                   initialScore={score}
                   initialUserVote={userVote}
+                  isAuthenticated={!!session?.user}
                 />
               </div>
               <Link

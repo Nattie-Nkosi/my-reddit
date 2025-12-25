@@ -21,6 +21,7 @@ interface CommentShowProps {
   currentUserId?: string;
   initialScore: number;
   initialUserVote: number | null;
+  isAuthenticated: boolean;
   children?: React.ReactNode;
 }
 
@@ -35,6 +36,7 @@ export default function CommentShow({
   currentUserId,
   initialScore,
   initialUserVote,
+  isAuthenticated,
   children,
 }: CommentShowProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
@@ -60,6 +62,7 @@ export default function CommentShow({
             targetType="comment"
             initialScore={initialScore}
             initialUserVote={initialUserVote}
+            isAuthenticated={isAuthenticated}
           />
         </div>
         <div className="flex-1 space-y-3">

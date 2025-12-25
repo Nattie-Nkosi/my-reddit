@@ -74,6 +74,7 @@ export default async function PostShowPage(props: PostShowPageProps) {
               targetType="post"
               initialScore={score}
               initialUserVote={userVote}
+              isAuthenticated={!!session?.user}
             />
           </div>
           <div className="flex-1 min-w-0">

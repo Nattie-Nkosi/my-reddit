@@ -61,6 +61,7 @@ export default async function CommentList({ postId }: CommentListProps) {
           currentUserId={session?.user?.id}
           initialScore={score}
           initialUserVote={userVote}
+          isAuthenticated={!!session?.user}
         >
           {renderComments(comment.id, depth + 1)}
         </CommentShow>
