@@ -52,8 +52,8 @@ export default function CommentShow({
   const isEdited = updatedAt.getTime() > createdAt.getTime();
 
   return (
-    <div className="border-l-2 border-muted pl-4 py-2">
-      <div className="flex gap-3">
+    <div className="border-l-2 border-muted pl-2 sm:pl-3 md:pl-4 py-2">
+      <div className="flex gap-2 sm:gap-3">
         <div className="pt-1">
           <VoteButtons
             targetId={commentId}
@@ -137,7 +137,7 @@ export default function CommentShow({
             </div>
           )}
 
-          {children && <div className="mt-4 space-y-4">{children}</div>}
+          {children && <div className="mt-3 sm:mt-4 space-y-3 sm:space-y-4">{children}</div>}
         </div>
       </div>
     </div>
