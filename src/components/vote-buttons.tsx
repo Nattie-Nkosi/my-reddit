@@ -21,10 +21,12 @@ export default function VoteButtons({
   const [isPending, startTransition] = useTransition();
   const [optimisticScore, setOptimisticScore] = useState(initialScore);
   const [optimisticUserVote, setOptimisticUserVote] = useState(initialUserVote);
+  const [error, setError] = useState<string | null>(null);
 
   const handleVote = (value: 1 | -1) => {
     const currentVote = optimisticUserVote;
-    let newScore = optimisticScore;
+    const currentScore = optimisticScore;
+    let newScore = currentScore;
     let newVote: number | null = value;
 
     if (currentVote === value) {
@@ -38,6 +40,7 @@ export default function VoteButtons({
 
     setOptimisticScore(newScore);
     setOptimisticUserVote(newVote);
+    setError(null);
 
     startTransition(async () => {
       try {
@@ -46,15 +49,18 @@ export default function VoteButtons({
         } else {
           await actions.voteComment(targetId, value);
         }
-      } catch (error) {
-        setOptimisticScore(optimisticScore);
+      } catch (err) {
+        setOptimisticScore(currentScore);
         setOptimisticUserVote(currentVote);
+        const errorMessage = err instanceof Error ? err.message : 'Failed to vote';
+        setError(errorMessage);
+        setTimeout(() => setError(null), 3000);
       }
     });
   };
 
   return (
-    <div className="flex flex-col items-center gap-1">
+    <div className="flex flex-col items-center gap-1 relative">
       <Button
         variant="ghost"
         size="sm"
@@ -86,6 +92,11 @@ export default function VoteButtons({
       >
         <ArrowDown className="h-5 w-5" />
       </Button>
+      {error && (
+        <div className="absolute mt-24 bg-destructive/10 text-destructive text-xs px-2 py-1 rounded whitespace-nowrap">
+          {error}
+        </div>
+      )}
     </div>
   );
 }

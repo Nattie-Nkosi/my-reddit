@@ -56,6 +56,7 @@ export default async function CommentList({ postId }: CommentListProps) {
           content={comment.content}
           authorName={comment.user.name}
           createdAt={comment.createdAt}
+          updatedAt={comment.updatedAt}
           userId={comment.userId}
           currentUserId={session?.user?.id}
           initialScore={score}

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { formatRelativeTime } from "@/lib/format-time";
 import paths from "@/paths";
 import CommentCreateForm from "./comment-create-form";
+import CommentEditForm from "./comment-edit-form";
+import CommentDeleteButton from "./comment-delete-button";
 import VoteButtons from "@/components/vote-buttons";
 
 interface CommentShowProps {
@@ -14,6 +16,7 @@ interface CommentShowProps {
   content: string;
   authorName: string | null;
   createdAt: Date;
+  updatedAt: Date;
   userId: string;
   currentUserId?: string;
   initialScore: number;
@@ -27,6 +30,7 @@ export default function CommentShow({
   content,
   authorName,
   createdAt,
+  updatedAt,
   userId,
   currentUserId,
   initialScore,
@@ -34,10 +38,18 @@ export default function CommentShow({
   children,
 }: CommentShowProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleReplySuccess = () => {
     setShowReplyForm(false);
   };
+
+  const handleEditSuccess = () => {
+    setIsEditing(false);
+  };
+
+  const isOwner = currentUserId === userId;
+  const isEdited = updatedAt.getTime() > createdAt.getTime();
 
   return (
     <div className="border-l-2 border-muted pl-4 py-2">
@@ -64,20 +76,55 @@ export default function CommentShow({
                 <span className="text-muted-foreground text-xs">
                   {formatRelativeTime(createdAt)}
                 </span>
+                {isEdited && (
+                  <>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground text-xs">
+                      (edited {formatRelativeTime(updatedAt)})
+                    </span>
+                  </>
+                )}
               </div>
-              <p className="text-sm mt-1 whitespace-pre-wrap">{content}</p>
+              {isEditing && isOwner ? (
+                <div className="mt-2">
+                  <CommentEditForm
+                    postId={postId}
+                    commentId={commentId}
+                    initialContent={content}
+                    onSuccess={handleEditSuccess}
+                    onCancel={() => setIsEditing(false)}
+                  />
+                </div>
+              ) : (
+                <p className="text-sm mt-1 whitespace-pre-wrap">{content}</p>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowReplyForm(!showReplyForm)}
-              className="h-7 text-xs"
-            >
-              {showReplyForm ? "Cancel" : "Reply"}
-            </Button>
+            {isOwner && !isEditing && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                  className="h-7 text-xs"
+                >
+                  Edit
+                </Button>
+                <CommentDeleteButton postId={postId} commentId={commentId} />
+              </>
+            )}
+            {!isEditing && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReplyForm(!showReplyForm)}
+                className="h-7 text-xs"
+              >
+                {showReplyForm ? "Cancel" : "Reply"}
+              </Button>
+            )}
           </div>
 
           {showReplyForm && (
