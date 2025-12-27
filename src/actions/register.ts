@@ -92,7 +92,16 @@ export async function register(formState: RegisterFormState, formData: FormData)
       }),
     ])
 
-    await sendVerificationEmail(result.data.email, verificationToken)
+    try {
+      await sendVerificationEmail(result.data.email, verificationToken)
+    } catch (emailError) {
+      console.error('Failed to send verification email:', emailError)
+      return {
+        errors: {
+          _form: ['Account created but failed to send verification email. Please contact support.'],
+        },
+      }
+    }
 
     return {
       errors: {},
