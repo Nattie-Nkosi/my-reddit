@@ -1,4 +1,7 @@
-export { signIn } from './sign-in'
+export { signInWithGitHub } from './sign-in'
+export { signInWithCredentials } from './sign-in-credentials'
+export { register } from './register'
+export { verifyEmail } from './verify-email'
 export { signOut } from './sign-out'
 export { createComment } from './create-comment'
 export { editComment } from './edit-comment'

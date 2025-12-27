@@ -29,12 +29,11 @@ export default async function Home() {
               {session?.user ? (
                 <TopicCreateForm />
               ) : (
-                <form action={actions.signIn}>
-                  <Button size="lg" type="submit" className="text-sm sm:text-base gap-2">
-                    <Github className="h-4 w-4 sm:h-5 sm:w-5" />
-                    Get Started with GitHub
+                <Link href="/auth/signin">
+                  <Button size="lg" className="text-sm sm:text-base">
+                    Get Started
                   </Button>
-                </form>
+                </Link>
               )}
             </div>
           </div>
@@ -89,7 +88,7 @@ export default async function Home() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Sign in securely with GitHub OAuth for a seamless experience
+                  Sign in with GitHub OAuth or email/password for a seamless experience
                 </CardDescription>
               </CardContent>
             </Card>
@@ -129,15 +128,14 @@ export default async function Home() {
             <div className="max-w-2xl mx-auto text-center space-y-4 sm:space-y-6">
               <h2 className="text-2xl sm:text-3xl font-bold">Ready to Join?</h2>
               <p className="text-base sm:text-lg text-muted-foreground px-4">
-                Sign in with GitHub to start creating topics, posting content, and
+                Sign in to start creating topics, posting content, and
                 participating in discussions.
               </p>
-              <form action={actions.signIn}>
-                <Button size="lg" type="submit" className="text-sm sm:text-base gap-2">
-                  <Github className="h-4 w-4 sm:h-5 sm:w-5" />
-                  Sign In with GitHub
+              <Link href="/auth/signin">
+                <Button size="lg" className="text-sm sm:text-base">
+                  Sign In
                 </Button>
-              </form>
+              </Link>
             </div>
           </div>
         </section>

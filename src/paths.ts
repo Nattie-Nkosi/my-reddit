@@ -18,6 +18,18 @@ const paths = {
     return `/users/${userId}`
 
   },
+  authSignIn() {
+    return '/auth/signin'
+
+  },
+  authRegister() {
+    return '/auth/register'
+
+  },
+  authVerify(token: string) {
+    return `/auth/verify?token=${token}`
+
+  },
 }
 
 export default paths

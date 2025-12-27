@@ -66,13 +66,11 @@ export default async function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <form action={actions.signIn}>
-                <Button type="submit" variant="default" size="sm" className="text-xs sm:text-sm gap-1 sm:gap-2">
-                  <Github className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Sign In with GitHub</span>
-                  <span className="sm:hidden">Sign In</span>
+              <Link href="/auth/signin">
+                <Button variant="default" size="sm">
+                  Sign In
                 </Button>
-              </form>
+              </Link>
             )}
           </div>
         </div>
