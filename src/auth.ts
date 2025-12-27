@@ -42,7 +42,7 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
           where: { email: parsed.data.email }
         });
 
-        if (!user?.password || !user.emailVerified) return null;
+        if (!user?.password) return null;
 
         const isValid = compareSync(parsed.data.password, user.password);
         if (!isValid) return null;
