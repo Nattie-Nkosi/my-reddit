@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Github } from "lucide-react";
+import { MessageSquare, TrendingUp, User, Shield, ArrowRight, Sparkles } from "lucide-react";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import TopicCreateForm from "@/components/topics/topic-create-form";
 import TopicList from "@/components/topics/topic-list";
 import TopicListSkeleton from "@/components/topics/topic-list-skeleton";
-import * as actions from "@/actions";
 
 export default async function Home() {
   const session = await auth();
@@ -15,25 +14,52 @@ export default async function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="border-b bg-muted/30">
-        <div className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
-          <div className="max-w-3xl mx-auto text-center space-y-4 sm:space-y-6">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-              Welcome to MyReddit
+      <section className="relative overflow-hidden border-b">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-background" />
+        <div className="absolute inset-0 bg-grid-white/10 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
+
+        <div className="relative container mx-auto px-4 py-16 sm:py-20 md:py-28 lg:py-32">
+          <div className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border bg-background/50 backdrop-blur-sm text-sm font-medium mb-4">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span>Join the conversation</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Share Ideas,
+              <br />
+              Build Communities
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
-              A community-driven platform where you can create topics, share posts,
-              engage in discussions, and connect with others.
+
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Connect with people who share your interests. Create topics, spark discussions, and discover amazing content.
             </p>
-            <div className="flex gap-3 sm:gap-4 justify-center pt-2 sm:pt-4">
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               {session?.user ? (
-                <TopicCreateForm />
+                <>
+                  <TopicCreateForm />
+                  <Link href="#topics">
+                    <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                      Explore Topics
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </>
               ) : (
-                <Link href="/auth/signin">
-                  <Button size="lg" className="text-sm sm:text-base">
-                    Get Started
-                  </Button>
-                </Link>
+                <>
+                  <Link href="/auth/signin">
+                    <Button size="lg" className="w-full sm:w-auto text-base px-8">
+                      Get Started
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <Link href="#features">
+                    <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-8">
+                      Learn More
+                    </Button>
+                  </Link>
+                </>
               )}
             </div>
           </div>
@@ -41,54 +67,74 @@ export default async function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-12 sm:py-16 bg-muted/30">
+      <section id="features" className="py-16 sm:py-20 md:py-24">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">Features</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
-            <Card>
-              <CardHeader>
-                <div className="text-4xl mb-2">💬</div>
-                <CardTitle>Discussions</CardTitle>
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+              Everything you need to connect
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Powerful features designed to help you build and engage with communities
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto">
+            <Card className="group relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader className="relative">
+                <div className="mb-4 inline-flex p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <MessageSquare className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-xl">Rich Discussions</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Create topics and engage in meaningful conversations with nested comments
+              <CardContent className="relative">
+                <CardDescription className="text-base">
+                  Engage in threaded conversations with nested comments and real-time updates
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="text-4xl mb-2">⬆️</div>
-                <CardTitle>Voting System</CardTitle>
+            <Card className="group relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader className="relative">
+                <div className="mb-4 inline-flex p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-xl">Smart Voting</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Upvote or downvote posts and comments to surface the best content
+              <CardContent className="relative">
+                <CardDescription className="text-base">
+                  Upvote quality content and help the best discussions rise to the top
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="text-4xl mb-2">👤</div>
-                <CardTitle>User Profiles</CardTitle>
+            <Card className="group relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader className="relative">
+                <div className="mb-4 inline-flex p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <User className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-xl">Personal Profiles</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Track your karma, view post history, and build your reputation
+              <CardContent className="relative">
+                <CardDescription className="text-base">
+                  Build your reputation with karma points and showcase your contributions
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <div className="text-4xl mb-2">🔒</div>
-                <CardTitle>Secure Auth</CardTitle>
+            <Card className="group relative overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <CardHeader className="relative">
+                <div className="mb-4 inline-flex p-3 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-xl">Secure Access</CardTitle>
               </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Sign in with GitHub OAuth or email/password for a seamless experience
+              <CardContent className="relative">
+                <CardDescription className="text-base">
+                  Multiple authentication options including GitHub OAuth and email/password
                 </CardDescription>
               </CardContent>
             </Card>
@@ -97,13 +143,13 @@ export default async function Home() {
       </section>
 
       {/* Topics Section */}
-      <section className="py-12 sm:py-16">
+      <section id="topics" className="py-16 sm:py-20 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8 max-w-6xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 sm:mb-12 max-w-6xl mx-auto">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Explore Topics</h2>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Browse communities or create your own
+              <h2 className="text-3xl sm:text-4xl font-bold mb-2">Explore Topics</h2>
+              <p className="text-base sm:text-lg text-muted-foreground">
+                Join communities that match your interests
               </p>
             </div>
             {session?.user && (
@@ -123,19 +169,31 @@ export default async function Home() {
 
       {/* CTA Section */}
       {!session?.user && (
-        <section className="py-12 sm:py-16 border-t bg-muted/30">
-          <div className="container mx-auto px-4">
-            <div className="max-w-2xl mx-auto text-center space-y-4 sm:space-y-6">
-              <h2 className="text-2xl sm:text-3xl font-bold">Ready to Join?</h2>
-              <p className="text-base sm:text-lg text-muted-foreground px-4">
-                Sign in to start creating topics, posting content, and
-                participating in discussions.
+        <section className="relative py-20 sm:py-24 md:py-28 border-t overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-primary/5 to-background" />
+          <div className="absolute inset-0 bg-grid-white/5 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
+
+          <div className="relative container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center space-y-6 sm:space-y-8">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+                Ready to get started?
+              </h2>
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Join thousands of users sharing ideas, building communities, and making connections.
               </p>
-              <Link href="/auth/signin">
-                <Button size="lg" className="text-sm sm:text-base">
-                  Sign In
-                </Button>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <Link href="/auth/register">
+                  <Button size="lg" className="w-full sm:w-auto text-base px-8">
+                    Create Account
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/auth/signin">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-8">
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
