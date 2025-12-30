@@ -61,25 +61,32 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
     error: '/auth/error',
   },
   callbacks: {
-    async jwt({ token, user, trigger, account }: any) {
-      if (user) {
+    async jwt({ token, user, trigger, account, profile }: any) {
+      if (account?.provider === 'github' && profile) {
+        let dbUser = await db.user.findUnique({
+          where: { email: profile.email },
+        });
+
+        if (!dbUser) {
+          dbUser = await db.user.create({
+            data: {
+              email: profile.email,
+              name: profile.name || profile.login,
+              image: profile.avatar_url,
+            },
+          });
+        }
+
+        token.id = dbUser.id;
+        token.role = dbUser.role;
+        token.suspended = dbUser.suspended;
+      } else if (user) {
         token.id = user.id;
         token.role = user.role;
         token.suspended = user.suspended;
       }
 
-      if (account?.provider === 'github' && token.id) {
-        const dbUser = await db.user.findUnique({
-          where: { id: token.id },
-          select: { role: true, suspended: true }
-        });
-        if (dbUser) {
-          token.role = dbUser.role;
-          token.suspended = dbUser.suspended;
-        }
-      }
-
-      if (trigger === 'update') {
+      if (trigger === 'update' && token.id) {
         const updatedUser = await db.user.findUnique({
           where: { id: token.id },
           select: { role: true, suspended: true }
