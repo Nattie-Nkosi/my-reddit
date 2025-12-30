@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Github } from "lucide-react";
+import { Github, Shield } from "lucide-react";
 import { auth } from "@/auth";
+import { checkAdmin } from "@/lib/auth-utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,6 +18,7 @@ import paths from "@/paths";
 
 export default async function Header() {
   const session = await auth();
+  const isUserAdmin = await checkAdmin();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -55,6 +57,17 @@ export default async function Header() {
                       Profile
                     </Link>
                   </DropdownMenuItem>
+                  {isUserAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href={paths.admin()} className="flex items-center">
+                          <Shield className="mr-2 h-4 w-4" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <form action={actions.signOut} className="w-full">

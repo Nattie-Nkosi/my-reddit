@@ -30,6 +30,14 @@ const paths = {
     return `/auth/verify?token=${token}`
 
   },
+  admin() {
+    return '/admin'
+
+  },
+  adminUsers() {
+    return '/admin/users'
+
+  },
 }
 
 export default paths

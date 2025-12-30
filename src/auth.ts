@@ -2,7 +2,6 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/db";
 import { compareSync } from "bcryptjs";
 import { z } from "zod";
@@ -20,7 +19,6 @@ const credentialsSchema = z.object({
 });
 
 export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
   },
@@ -47,7 +45,14 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
         const isValid = compareSync(parsed.data.password, user.password);
         if (!isValid) return null;
 
-        return { id: user.id, email: user.email, name: user.name, image: user.image };
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.image,
+          role: user.role,
+          suspended: user.suspended
+        };
       }
     })
   ],
@@ -56,15 +61,42 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
     error: '/auth/error',
   },
   callbacks: {
-    async jwt({ token, user }: any) {
+    async jwt({ token, user, trigger, account }: any) {
       if (user) {
         token.id = user.id;
+        token.role = user.role;
+        token.suspended = user.suspended;
       }
+
+      if (account?.provider === 'github' && token.id) {
+        const dbUser = await db.user.findUnique({
+          where: { id: token.id },
+          select: { role: true, suspended: true }
+        });
+        if (dbUser) {
+          token.role = dbUser.role;
+          token.suspended = dbUser.suspended;
+        }
+      }
+
+      if (trigger === 'update') {
+        const updatedUser = await db.user.findUnique({
+          where: { id: token.id },
+          select: { role: true, suspended: true }
+        });
+        if (updatedUser) {
+          token.role = updatedUser.role;
+          token.suspended = updatedUser.suspended;
+        }
+      }
+
       return token;
     },
     async session({ session, token }: any) {
       if (session?.user) {
         session.user.id = token.id || token.sub;
+        session.user.role = token.role;
+        session.user.suspended = token.suspended;
       }
       return session;
     }
