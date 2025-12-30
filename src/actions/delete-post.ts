@@ -1,17 +1,13 @@
 'use server'
 
-import { auth } from '@/auth'
+import { requireAuth } from '@/lib/auth-utils'
 import { db } from '@/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import paths from '@/paths'
 
 export async function deletePost(topicSlug: string, postId: string) {
-  const session = await auth()
-
-  if (!session?.user?.id) {
-    throw new Error('You must be signed in to delete a post')
-  }
+  const session = await requireAuth()
 
   const post = await db.post.findUnique({
     where: { id: postId },

@@ -1,16 +1,12 @@
 'use server'
 
-import { auth } from '@/auth'
+import { requireAuth } from '@/lib/auth-utils'
 import { db } from '@/db'
 import { revalidatePath } from 'next/cache'
 import paths from '@/paths'
 
 export async function deleteComment(postId: string, commentId: string) {
-  const session = await auth()
-
-  if (!session?.user?.id) {
-    throw new Error('You must be signed in to delete a comment')
-  }
+  const session = await requireAuth()
 
   const comment = await db.comment.findUnique({
     where: { id: commentId },

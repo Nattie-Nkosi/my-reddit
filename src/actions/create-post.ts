@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { auth } from '@/auth'
+import { requireAuth } from '@/lib/auth-utils'
 import { db } from '@/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -31,12 +31,13 @@ export async function createPost(
   formState: CreatePostFormState,
   formData: FormData
 ): Promise<CreatePostFormState> {
-  const session = await auth()
-
-  if (!session?.user?.id) {
+  let session
+  try {
+    session = await requireAuth()
+  } catch (error) {
     return {
       errors: {
-        _form: ['You must be signed in to create a post'],
+        _form: [error instanceof Error ? error.message : 'Authentication required'],
       },
     }
   }

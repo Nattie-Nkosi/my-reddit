@@ -1,6 +1,6 @@
 'use server'
 
-import { auth } from '@/auth'
+import { requireAuth } from '@/lib/auth-utils'
 import { db } from '@/db'
 import { revalidatePath } from 'next/cache'
 import paths from '@/paths'
@@ -9,10 +9,11 @@ export async function votePost(
   postId: string,
   value: 1 | -1
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth()
-
-  if (!session?.user?.id) {
-    return { success: false, error: 'You must be signed in to vote' }
+  let session
+  try {
+    session = await requireAuth()
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Authentication required' }
   }
 
   const post = await db.post.findUnique({
@@ -71,10 +72,11 @@ export async function voteComment(
   commentId: string,
   value: 1 | -1
 ): Promise<{ success: boolean; error?: string }> {
-  const session = await auth()
-
-  if (!session?.user?.id) {
-    return { success: false, error: 'You must be signed in to vote' }
+  let session
+  try {
+    session = await requireAuth()
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Authentication required' }
   }
 
   const comment = await db.comment.findUnique({

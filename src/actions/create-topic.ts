@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { auth } from '@/auth'
+import { requireAuth } from '@/lib/auth-utils'
 import { db } from '@/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
@@ -31,12 +31,12 @@ export async function createTopic(
   formState: CreateTopicFormState,
   formData: FormData
 ): Promise<CreateTopicFormState> {
-  const session = await auth()
-
-  if (!session?.user) {
+  try {
+    await requireAuth()
+  } catch (error) {
     return {
       errors: {
-        _form: ['You must be signed in to create a topic'],
+        _form: [error instanceof Error ? error.message : 'Authentication required'],
       },
     }
   }
